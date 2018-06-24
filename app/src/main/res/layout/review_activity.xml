@@ -13,6 +13,7 @@
         android:layout_height="match_parent"
         android:divider="@null"
         android:dividerHeight="0dp"
+        android:drawSelectorOnTop="true"
         android:orientation="vertical" />
 
     <!-- Empty view is only visible when the list has no items. -->
