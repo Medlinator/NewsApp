@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">News App</string>
+    <string name="sample_title">Dark Souls: Remastered review - dark fantasy RPG makes glorious return</string>
+    <string name="sample_author">Rich Stanton</string>
+    <string name="sample_date">Jun 1, 2018</string>
+    <string name="star_rating_content_description">Image showing how many stars the reviewer gave the specified video game.</string>
+    <string name="no_internet_connection">No internet connection.</string>
+    <string name="no_reviews">No reviews found.</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary color of the app (shown in the app bar) -->
+    <color name="colorPrimary">#018592</color>
+
+    <!-- Primary dark color of the app (shown in the status bar) -->
+    <color name="colorPrimaryDark">#005864</color>
+
+    <!-- Accent color of the app -->
+    <color name="colorAccent">#50b5c2</color>
+
+    <!-- Background color for review list item -->
+    <color name="backgroundColorReviewListItem">#cfd8dc</color>
+
+</resources>
