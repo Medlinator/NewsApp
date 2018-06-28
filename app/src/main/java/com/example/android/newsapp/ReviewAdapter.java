@@ -58,13 +58,20 @@ public class ReviewAdapter extends ArrayAdapter<Review> {
         // Find the review at the given position in the list of reviews.
         Review currentReview = getItem(position);
 
+        String getThumbnail = currentReview.getThumbnail();
+
         // Find the ImageView with view ID thumbnail.
         ImageView thumbnailView = listItemView.findViewById(R.id.thumbnail);
         // Display the image of the current review in that ImageView.
-        Picasso.get().load(currentReview.getThumbnail()).into(thumbnailView);
-        // The rubric stated no external libraries, so I wrote out the logic to perform the same
-        // task Picasso does. I still implemented Picasso because it downloads the images quicker.
+        Log.e("getThumbnail", getThumbnail);
+        if (currentReview.getThumbnail() == "") {
+            thumbnailView.setImageResource(R.drawable.no_image_found);
+        } else {
+            Picasso.get().load(currentReview.getThumbnail()).into(thumbnailView);
+            // The rubric stated no external libraries, so I wrote out the logic to perform the same
+            // task Picasso does. I still implemented Picasso because it downloads the images quicker.
 //        new DownloadImageTask(thumbnailView).execute(currentReview.getThumbnail());
+        }
 
         // Find the TextView with view ID title.
         TextView titleView = listItemView.findViewById(R.id.title);

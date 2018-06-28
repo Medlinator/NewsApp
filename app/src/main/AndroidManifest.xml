@@ -12,11 +12,20 @@
         android:label="Video Game Reviews"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ReviewActivity">
+        <activity android:name=".ReviewActivity"
+            android:label="@string/review_title">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settings_title">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.newsapp.ReviewActivity" />
         </activity>
     </application>
 </manifest>

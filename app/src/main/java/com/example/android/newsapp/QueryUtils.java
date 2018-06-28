@@ -25,6 +25,17 @@ public class QueryUtils {
 
     /** Tag for the log messages */
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
+    private static final int readTimeout = 10000;
+    private static final int connectTimeout = 15000;
+    private static final String RESPONSE = "response";
+    private static final String RESULTS = "results";
+    private static final String FIELDS = "fields";
+    private static final String THUMBNAIL = "thumbnail";
+    private static final String WEBTITLE = "webTitle";
+    private static final String TAGS = "tags";
+    private static final String WEBPUBLICATIONDATE = "webPublicationDate";
+    private static final String STARRATING = "starRating";
+    private static final String WEBURL = "webUrl";
 
     /**
      * Create a private constructor because no one should ever create a {@link QueryUtils} object.
@@ -85,14 +96,14 @@ public class QueryUtils {
         InputStream inputStream = null;
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setReadTimeout(10000 /* milliseconds */);
-            urlConnection.setConnectTimeout(15000 /* milliseconds */);
+            urlConnection.setReadTimeout(readTimeout /* milliseconds */);
+            urlConnection.setConnectTimeout(connectTimeout /* milliseconds */);
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
             // If the request was successful (response code 200),
             // then read the input stream and parse the response.
-            if (urlConnection.getResponseCode() == 200) {
+            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
             } else {
@@ -153,11 +164,11 @@ public class QueryUtils {
             JSONObject baseJsonResponse = new JSONObject(reviewJSON);
 
             // Extract the JSONObject containing the results.
-            JSONObject response = baseJsonResponse.getJSONObject("response");
+            JSONObject response = baseJsonResponse.getJSONObject(RESPONSE);
 
             // Extract the JSONArray associated with the key called "results",
             // which represents a list of results (or reviews).
-            JSONArray reviewArray = response.getJSONArray("results");
+            JSONArray reviewArray = response.getJSONArray(RESULTS);
 
             // For each review in the reviewArray, create an {@link Review} object.
             for (int i = 0; i < reviewArray.length(); i++) {
@@ -168,32 +179,36 @@ public class QueryUtils {
                 // For a given review, extract the JSONObject associated with the
                 // key called "fields", which holds the rating and thumbnail url
                 // for that review.
-                JSONObject fields = currentReview.getJSONObject("fields");
-
-                // Extract the value for the key called "thumbnail".
-                String thumbnail = fields.getString("thumbnail");
+                JSONObject fields = currentReview.getJSONObject(FIELDS);
+                // If there is no image, default is null.
+                String thumbnail = "";
+                // If there is an image, assign it to the thumbnail variable.
+                if (fields.has(THUMBNAIL)) {
+                    // Extract the value for the key called "thumbnail".
+                    thumbnail = fields.getString(THUMBNAIL);
+                }
 
                 // Extract the value for the key called "webTitle".
-                String title = currentReview.getString("webTitle");
+                String title = currentReview.getString(WEBTITLE);
 
                 // For a given review, extract the JSONObject associated with the
                 // key called "tags", which holds the author's name for that review.
-                JSONArray tags = currentReview.getJSONArray("tags");
+                JSONArray tags = currentReview.getJSONArray(TAGS);
                 // If no author cited, default is "No author cited."
                 String author = "No author cited.";
                 // If there is an author cited assign it to the author variable.
                 if (tags.length() >= 1) {
-                    author = tags.getJSONObject(0).getString("webTitle");
+                    author = tags.getJSONObject(0).getString(WEBTITLE);
                 }
 
                 // Extract the value for the key called "webPublicationDate".
-                String date = currentReview.getString("webPublicationDate");
+                String date = currentReview.getString(WEBPUBLICATIONDATE);
 
                 // Extract the value for the key called "starRating".
-                String rating = fields.getString("starRating");
+                String rating = fields.getString(STARRATING);
 
                 // Extract the value for the key called "webUrl".
-                String url = currentReview.getString("webUrl");
+                String url = currentReview.getString(WEBURL);
 
                 // Create a new {@link Review} object with the thumbnail, title, author,
                 // date, rating, and url from the JSON response.
@@ -210,16 +225,6 @@ public class QueryUtils {
             Log.e("QueryUtils", "Problem parsing the review JSON results", e);
         }
 
-        // Return the list of reviews.
-        Log.e("QueryUtils", "Successful");
-        for(int i=0;i<reviews.size();i++){
-            System.out.println(reviews.get(i).getThumbnail());
-            System.out.println(reviews.get(i).getTitle());
-            System.out.println(reviews.get(i).getAuthor());
-            System.out.println(reviews.get(i).getDate());
-            System.out.println(reviews.get(i).getRating());
-            System.out.println(reviews.get(i).getUrl());
-        }
         return reviews;
     }
 }

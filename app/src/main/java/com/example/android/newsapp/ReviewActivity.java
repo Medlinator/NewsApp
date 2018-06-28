@@ -5,11 +5,16 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -23,7 +28,7 @@ public class ReviewActivity extends AppCompatActivity
 
     /** URL for review data from The Guardian. */
     private static final String THE_GUARDIAN_REQUEST_URL =
-            "https://content.guardianapis.com/search?q=games&section=games&tag=tone%2Freviews&star-rating=1%7C2%7C3%7C4%7C5&show-tags=contributor&show-fields=thumbnail%2CstarRating&page=1&page-size=20&api-key=f625187f-4a30-47c0-bf6a-a6f1d12dc4c5&order-by=newest";
+            "https://content.guardianapis.com/search";
 
     /**
      * Constant value for the review loader ID.
@@ -65,7 +70,9 @@ public class ReviewActivity extends AppCompatActivity
                 Intent websiteIntent = new Intent(Intent.ACTION_VIEW, reviewUri);
 
                 // Send the intent to launch a new activity.
-                startActivity(websiteIntent);
+                if (websiteIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(websiteIntent);
+                }
             }
         });
 
@@ -101,8 +108,39 @@ public class ReviewActivity extends AppCompatActivity
 
     @Override
     public Loader<List<Review>> onCreateLoader(int i, Bundle bundle) {
-        // Create a new loader for the given URL.
-        return new ReviewLoader(this, THE_GUARDIAN_REQUEST_URL);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // getString retrieves a String value from the preferences. The second parameter is the default value for this preference.
+        String minRating = sharedPrefs.getString(
+                getString(R.string.settings_minimum_rating_key),
+                getString(R.string.settings_minimum_rating_default)
+        );
+
+        String orderBy = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default)
+        );
+
+        // parse breaks apart the URI string that's passed into its parameter
+        Uri baseUri = Uri.parse(THE_GUARDIAN_REQUEST_URL);
+
+        // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        // Append query parameter and its value.
+        uriBuilder.appendQueryParameter("q", "games");
+        uriBuilder.appendQueryParameter("section", "games");
+        uriBuilder.appendQueryParameter("tag", "tone/reviews");
+        uriBuilder.appendQueryParameter("star-rating", minRating);
+        uriBuilder.appendQueryParameter("show-tags", "contributor");
+        uriBuilder.appendQueryParameter("show-fields", "thumbnail,starRating");
+        uriBuilder.appendQueryParameter("page", "1");
+        uriBuilder.appendQueryParameter("page-size", "20");
+        uriBuilder.appendQueryParameter("api-key", "f625187f-4a30-47c0-bf6a-a6f1d12dc4c5");
+        uriBuilder.appendQueryParameter("order-by", orderBy);
+
+        // Return the completed uri `https://content.guardianapis.com/search?q=games&section=games&tag=tone/reviews&star-rating=1|2|3|4|5&show-tags=contributor&show-fields=thumbnail,starRating&page=1&page-size=20&api-key=f625187f-4a30-47c0-bf6a-a6f1d12dc4c5&order-by=newest
+        return new ReviewLoader(this, uriBuilder.toString());
     }
 
     @Override
@@ -128,5 +166,22 @@ public class ReviewActivity extends AppCompatActivity
     public void onLoaderReset(Loader<List<Review>> loader) {
         // Loader reset, so we can clear out our existing data.
         mAdapter.clear();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

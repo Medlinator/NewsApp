@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string-array name="settings_order_by_labels">
+        <item>@string/settings_order_by_newest_label</item>
+        <item>@string/settings_order_by_oldest_label</item>
+    </string-array>
+
+    <string-array name="settings_order_by_values">
+        <item>@string/settings_order_by_newest_value</item>
+        <item>@string/settings_order_by_oldest_value</item>
+    </string-array>
+
+    <string-array name="settings_minimum_rating_labels">
+        <item>@string/settings_minimum_star_rating_1_label</item>
+        <item>@string/settings_minimum_star_rating_2_label</item>
+        <item>@string/settings_minimum_star_rating_3_label</item>
+        <item>@string/settings_minimum_star_rating_4_label</item>
+        <item>@string/settings_minimum_star_rating_5_label</item>
+    </string-array>
+
+    <string-array name="settings_minimum_rating_values">
+        <item>@string/settings_minimum_star_rating_1_value</item>
+        <item>@string/settings_minimum_star_rating_2_value</item>
+        <item>@string/settings_minimum_star_rating_3_value</item>
+        <item>@string/settings_minimum_star_rating_4_value</item>
+        <item>@string/settings_minimum_star_rating_5_value</item>
+    </string-array>
+</resources>
